@@ -6,6 +6,7 @@ import { z } from "zod";
 import WebSocket from "ws";
 import { v4 as uuidv4 } from "uuid";
 import { readFile } from "fs/promises";
+import { resolvePort } from "../port";
 
 // Define TypeScript interfaces for Figma responses
 interface FigmaResponse {
@@ -85,6 +86,14 @@ const args = process.argv.slice(2);
 const serverArg = args.find(arg => arg.startsWith('--server='));
 const serverUrl = serverArg ? serverArg.split('=')[1] : 'localhost';
 const WS_URL = serverUrl === 'localhost' ? `ws://${serverUrl}` : `wss://${serverUrl}`;
+
+let figmaPort: number;
+try {
+  figmaPort = resolvePort();
+} catch (error) {
+  logger.error((error as Error).message);
+  process.exit(1);
+}
 
 // Document Info Tool
 server.tool(
@@ -2861,7 +2870,7 @@ function processFigmaNodeResponse(result: unknown): any {
 }
 
 // Update the connectToFigma function
-function connectToFigma(port: number = 3055) {
+function connectToFigma(port: number = figmaPort) {
   // If already connected, do nothing
   if (ws && ws.readyState === WebSocket.OPEN) {
     logger.info('Already connected to Figma');

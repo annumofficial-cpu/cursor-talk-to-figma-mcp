@@ -78,6 +78,32 @@ bun socket
 3. Select the `src/cursor_mcp_plugin/manifest.json` file
 4. The plugin should now be available in your Figma development plugins
 
+### Changing the port (running several projects at once)
+
+The WebSocket server and the MCP server both use port `3055` unless you set the `TALK_TO_FIGMA_PORT` environment variable. To run a second project side by side, give it its own port:
+
+1. Start its WebSocket server on that port:
+
+```bash
+TALK_TO_FIGMA_PORT=3056 bun socket
+```
+
+2. Give its MCP server the same port in your MCP config:
+
+```json
+{
+  "mcpServers": {
+    "TalkToFigma": {
+      "command": "bun",
+      "args": ["/path-to-repo/src/talk_to_figma_mcp/server.ts"],
+      "env": { "TALK_TO_FIGMA_PORT": "3056" }
+    }
+  }
+}
+```
+
+3. In the Figma plugin, type the same port into the "WebSocket Server Port" box before connecting. The plugin runs inside Figma and cannot read environment variables. Note that `src/cursor_mcp_plugin/manifest.json` only lists port `3055` under `networkAccess`, so Figma may block other ports until they are added there.
+
 ## Windows + WSL Guide
 
 1. Install bun via powershell
