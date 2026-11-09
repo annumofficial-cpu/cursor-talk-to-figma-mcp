@@ -1022,7 +1022,8 @@ server.tool(
             type: "text",
             text: `Error getting annotations: ${error instanceof Error ? error.message : String(error)}`
           }
-        ]
+        ],
+        isError: true
       };
     }
   }
@@ -1056,7 +1057,8 @@ server.tool(
             type: "text",
             text: JSON.stringify(result)
           }
-        ]
+        ],
+        ...((result as any)?.success === false && { isError: true })
       };
     } catch (error) {
       return {
@@ -1065,7 +1067,8 @@ server.tool(
             type: "text",
             text: `Error setting annotation: ${error instanceof Error ? error.message : String(error)}`
           }
-        ]
+        ],
+        isError: true
       };
     }
   }
