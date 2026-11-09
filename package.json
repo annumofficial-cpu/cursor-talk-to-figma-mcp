@@ -17,6 +17,7 @@
     "socket": "bun run src/socket.ts",
     "setup": "./scripts/setup.sh",
     "build": "tsup",
+    "check:annotations": "bun scripts/check-tool-annotations.ts",
     "build:watch": "tsup --watch",
     "dev": "bun run build:watch",
     "pub:release": "bun run build && npm publish"
@@ -31,6 +32,6 @@
     "@modelcontextprotocol/sdk": "1.13.1",
     "uuid": "latest",
     "ws": "latest",
-    "zod": "3.22.4"
+    "zod": "3.24.2"
   }
 }

@@ -19,9 +19,10 @@ bun run dev              # Build in watch mode
 bun socket               # Start WebSocket relay server (port 3055)
 bun run start            # Run built MCP server
 bun setup                # Full setup (install + write .cursor/mcp.json + .mcp.json)
+bun run check:annotations # Fail if a tool that deletes/overwrites content lacks destructiveHint: true
 ```
 
-There is no test suite or linter configured.
+There is no test suite or linter configured. Every MCP tool must declare `readOnlyHint`, and every tool that changes the document must also declare `destructiveHint` (`true` if it deletes or overwrites existing content); `bun run check:annotations` enforces this.
 
 ## Architecture
 

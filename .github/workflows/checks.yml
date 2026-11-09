@@ -1,0 +1,20 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Build
+        run: bun run build
+      - name: Type check
+        run: bun node_modules/typescript/bin/tsc --noEmit -p tsconfig.json
+      - name: Tool annotations
+        run: bun run check:annotations
