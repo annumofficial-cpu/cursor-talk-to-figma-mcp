@@ -1,6 +1,15 @@
 #!/usr/bin/env bun
 
 import { Server, ServerWebSocket } from "bun";
+import { resolvePort } from "./port";
+
+let port: number;
+try {
+  port = resolvePort();
+} catch (error) {
+  console.error((error as Error).message);
+  process.exit(1);
+}
 
 // Store clients by channel
 const channels = new Map<string, Set<ServerWebSocket<any>>>();
@@ -39,7 +48,7 @@ function handleConnection(ws: ServerWebSocket<any>) {
 }
 
 const server = Bun.serve({
-  port: 3055,
+  port,
   // uncomment this to allow connections in windows wsl
   // hostname: "0.0.0.0",
   fetch(req: Request, server: Server) {
