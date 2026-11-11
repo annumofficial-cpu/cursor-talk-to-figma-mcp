@@ -1017,6 +1017,7 @@ server.tool(
       };
     } catch (error) {
       return {
+        isError: true,
         content: [
           {
             type: "text",
@@ -1050,16 +1051,21 @@ server.tool(
         categoryId,
         properties
       });
+      const failed = (result as { success?: boolean; error?: string })?.success === false;
       return {
+        isError: failed,
         content: [
           {
             type: "text",
-            text: JSON.stringify(result)
+            text: failed
+              ? `Error setting annotation: ${(result as { error?: string }).error}`
+              : JSON.stringify(result)
           }
         ]
       };
     } catch (error) {
       return {
+        isError: true,
         content: [
           {
             type: "text",
