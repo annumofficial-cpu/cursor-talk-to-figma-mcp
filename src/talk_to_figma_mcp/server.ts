@@ -2983,8 +2983,14 @@ function connectToFigma(port: number = 3055) {
   });
 }
 
+const CHANNEL_NAME_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
+
 // Function to join a channel
 async function joinChannel(channelName: string): Promise<void> {
+  if (!CHANNEL_NAME_PATTERN.test(channelName)) {
+    throw new Error("Invalid channel name: use 1 to 64 letters, digits, underscores or hyphens");
+  }
+
   if (!ws || ws.readyState !== WebSocket.OPEN) {
     throw new Error("Not connected to Figma");
   }

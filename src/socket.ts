@@ -2,6 +2,8 @@
 
 import { Server, ServerWebSocket } from "bun";
 
+const CHANNEL_NAME_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
+
 // Store clients by channel
 const channels = new Map<string, Set<ServerWebSocket<any>>>();
 
@@ -77,6 +79,13 @@ const server = Bun.serve({
     message(ws: ServerWebSocket<any>, message: string | Buffer) {
       try {
         const data = JSON.parse(message as string);
+        if (data.channel && (typeof data.channel !== "string" || !CHANNEL_NAME_PATTERN.test(data.channel))) {
+          ws.send(JSON.stringify({
+            type: "error",
+            message: "Invalid channel name: use 1 to 64 letters, digits, underscores or hyphens"
+          }));
+          return;
+        }
         console.log(`\n=== Received message from client ===`);
         console.log(`Type: ${data.type}, Channel: ${data.channel || 'N/A'}`);
         if (data.message?.command) {
