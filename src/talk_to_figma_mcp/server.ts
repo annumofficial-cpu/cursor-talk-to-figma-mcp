@@ -86,6 +86,20 @@ const serverArg = args.find(arg => arg.startsWith('--server='));
 const serverUrl = serverArg ? serverArg.split('=')[1] : 'localhost';
 const WS_URL = serverUrl === 'localhost' ? `ws://${serverUrl}` : `wss://${serverUrl}`;
 
+const DEFAULT_PORT = 3055;
+
+function getPort(): number {
+  const raw = process.env.TALK_TO_FIGMA_PORT?.trim();
+  if (!raw) return DEFAULT_PORT;
+  const port = Number(raw);
+  if (!/^\d+$/.test(raw) || port < 1 || port > 65535) {
+    logger.error(`Invalid TALK_TO_FIGMA_PORT "${raw}": must be a whole number from 1 to 65535`);
+    process.exit(1);
+  }
+  return port;
+}
+const PORT = getPort();
+
 // Document Info Tool
 server.tool(
   "get_document_info",
@@ -2861,7 +2875,7 @@ function processFigmaNodeResponse(result: unknown): any {
 }
 
 // Update the connectToFigma function
-function connectToFigma(port: number = 3055) {
+function connectToFigma(port: number = PORT) {
   // If already connected, do nothing
   if (ws && ws.readyState === WebSocket.OPEN) {
     logger.info('Already connected to Figma');
