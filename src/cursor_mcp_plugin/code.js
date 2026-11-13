@@ -2854,6 +2854,12 @@ async function setAnnotation(params) {
 
     // Verify the update
     console.log("Updated node annotations:", node.annotations);
+    if (!node.annotations || node.annotations.length === 0) {
+      return {
+        success: false,
+        error: `Figma did not save the annotation on node ${node.id}`,
+      };
+    }
     console.log("=== setAnnotation Debug End ===");
 
     return {
