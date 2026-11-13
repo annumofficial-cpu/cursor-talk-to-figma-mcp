@@ -2985,6 +2985,10 @@ function connectToFigma(port: number = 3055) {
 
 // Function to join a channel
 async function joinChannel(channelName: string): Promise<void> {
+  if (!/^[A-Za-z0-9_-]{1,64}$/.test(channelName)) {
+    throw new Error("Invalid channel name: use 1-64 letters, digits, underscores or hyphens");
+  }
+
   if (!ws || ws.readyState !== WebSocket.OPEN) {
     throw new Error("Not connected to Figma");
   }
