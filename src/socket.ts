@@ -5,6 +5,9 @@ import { Server, ServerWebSocket } from "bun";
 // Store clients by channel
 const channels = new Map<string, Set<ServerWebSocket<any>>>();
 
+const isValidChannelName = (name: unknown) =>
+  typeof name === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(name);
+
 function handleConnection(ws: ServerWebSocket<any>) {
   // Don't add to clients immediately - wait for channel join
   console.log("New client connected");
@@ -77,6 +80,13 @@ const server = Bun.serve({
     message(ws: ServerWebSocket<any>, message: string | Buffer) {
       try {
         const data = JSON.parse(message as string);
+        if (data.channel && !isValidChannelName(data.channel)) {
+          ws.send(JSON.stringify({
+            type: "error",
+            message: "Invalid channel name: use 1-64 letters, digits, underscores or hyphens"
+          }));
+          return;
+        }
         console.log(`\n=== Received message from client ===`);
         console.log(`Type: ${data.type}, Channel: ${data.channel || 'N/A'}`);
         if (data.message?.command) {
