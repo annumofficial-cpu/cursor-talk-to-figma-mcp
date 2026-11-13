@@ -1022,7 +1022,8 @@ server.tool(
             type: "text",
             text: `Error getting annotations: ${error instanceof Error ? error.message : String(error)}`
           }
-        ]
+        ],
+        isError: true
       };
     }
   }
@@ -1050,6 +1051,9 @@ server.tool(
         categoryId,
         properties
       });
+      if ((result as any)?.success === false) {
+        throw new Error((result as any).error);
+      }
       return {
         content: [
           {
@@ -1065,7 +1069,8 @@ server.tool(
             type: "text",
             text: `Error setting annotation: ${error instanceof Error ? error.message : String(error)}`
           }
-        ]
+        ],
+        isError: true
       };
     }
   }
