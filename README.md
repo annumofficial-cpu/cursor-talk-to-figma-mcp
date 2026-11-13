@@ -145,7 +145,7 @@ The MCP server provides the following tools for interacting with Figma:
 
 ### Prototyping & Connections
 
-- `get_reactions` - Get all prototype reactions from nodes with visual highlight animation
+- `get_reactions` - Get all prototype reactions from nodes
 - `set_default_connector` - Set a copied FigJam connector as the default connector style for creating connections (must be set before creating connections)
 - `create_connections` - Create FigJam connector lines between nodes, based on prototype flows or custom mapping
 
