@@ -2,6 +2,19 @@
 
 import { Server, ServerWebSocket } from "bun";
 
+const DEFAULT_PORT = 3055;
+
+function getPort(): number {
+  const raw = process.env.TALK_TO_FIGMA_PORT?.trim();
+  if (!raw) return DEFAULT_PORT;
+  const port = Number(raw);
+  if (!/^\d+$/.test(raw) || port < 1 || port > 65535) {
+    console.error(`Invalid TALK_TO_FIGMA_PORT "${raw}": must be a whole number from 1 to 65535`);
+    process.exit(1);
+  }
+  return port;
+}
+
 // Store clients by channel
 const channels = new Map<string, Set<ServerWebSocket<any>>>();
 
@@ -39,7 +52,7 @@ function handleConnection(ws: ServerWebSocket<any>) {
 }
 
 const server = Bun.serve({
-  port: 3055,
+  port: getPort(),
   // uncomment this to allow connections in windows wsl
   // hostname: "0.0.0.0",
   fetch(req: Request, server: Server) {

@@ -71,6 +71,27 @@ Start the WebSocket server:
 bun socket
 ```
 
+### Custom port (running several projects at once)
+
+The WebSocket server and the MCP server both use port `3055` unless the `TALK_TO_FIGMA_PORT` environment variable is set. To run a second project at the same time, pick another port (for example `3056`) and use it in all three places:
+
+1. WebSocket server: `TALK_TO_FIGMA_PORT=3056 bun socket`
+2. MCP server: add an `env` entry to its MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "TalkToFigma": {
+      "command": "bunx",
+      "args": ["cursor-talk-to-figma-mcp@latest"],
+      "env": { "TALK_TO_FIGMA_PORT": "3056" }
+    }
+  }
+}
+```
+
+3. Figma plugin: type the same port into the plugin's port box before clicking Connect. The plugin cannot read environment variables. Figma only lets the plugin connect to addresses listed under `networkAccess` in `src/cursor_mcp_plugin/manifest.json`, which currently lists only `ws://localhost:3055`, so another port must be added there first.
+
 ### Figma Plugin
 
 1. In Figma, go to Plugins > Development > New Plugin
