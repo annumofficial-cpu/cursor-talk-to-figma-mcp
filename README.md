@@ -71,6 +71,26 @@ Start the WebSocket server:
 bun socket
 ```
 
+The WebSocket server and the MCP server use port 3055 by default. To use a different port (for example to run several Cursor + Figma projects at the same time), set `TALK_TO_FIGMA_PORT` to the same value for both:
+
+```bash
+TALK_TO_FIGMA_PORT=3056 bun socket
+```
+
+```json
+{
+  "mcpServers": {
+    "TalkToFigma": {
+      "command": "bunx",
+      "args": ["cursor-talk-to-figma-mcp@latest"],
+      "env": { "TALK_TO_FIGMA_PORT": "3056" }
+    }
+  }
+}
+```
+
+The Figma plugin cannot read environment variables; type the port into its "WebSocket Server Port" field instead. Note that the plugin's `manifest.json` currently only allows connections to `ws://localhost:3055`, so other ports also need to be added to its `networkAccess` lists.
+
 ### Figma Plugin
 
 1. In Figma, go to Plugins > Development > New Plugin
