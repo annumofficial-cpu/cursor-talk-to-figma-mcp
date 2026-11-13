@@ -38,8 +38,16 @@ function handleConnection(ws: ServerWebSocket<any>) {
   };
 }
 
+const DEFAULT_PORT = 3055;
+const portEnv = process.env.TALK_TO_FIGMA_PORT?.trim();
+const port = portEnv ? Number(portEnv) : DEFAULT_PORT;
+if ((portEnv && !/^\d+$/.test(portEnv)) || port < 1 || port > 65535) {
+  console.error(`Invalid TALK_TO_FIGMA_PORT "${portEnv}": must be a whole number from 1 to 65535`);
+  process.exit(1);
+}
+
 const server = Bun.serve({
-  port: 3055,
+  port,
   // uncomment this to allow connections in windows wsl
   // hostname: "0.0.0.0",
   fetch(req: Request, server: Server) {
